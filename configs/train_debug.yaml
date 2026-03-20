@@ -1,0 +1,70 @@
+# Debug/small-scale training config for Drift-TTS
+# Use with LibriTTS-R subset for proof-of-concept
+
+logging:
+  project: "drift-tts-debug"
+  entity: null
+  use_wandb: false
+  log_every_k: 5
+  name: "drift-tts-debug"
+
+dacvae_path: "facebook/dacvae-watermarked"
+wavlm_path: "microsoft/wavlm-large"
+
+data:
+  cache_root: "/data/libritts/cache"
+  num_workers: 4
+
+model:
+  latent_dim: 128
+  latent_patch_size: 8
+
+  # Smaller model for debugging
+  hidden_size: 512
+  depth: 12
+  num_heads: 8
+  mlp_ratio: 4.0
+  use_qknorm: true
+  use_swiglu: true
+  use_rope: true
+  use_rmsnorm: true
+  use_gradient_checkpointing: false
+
+  vocab_size: 259
+  text_hidden_size: 256
+  text_num_layers: 3
+  text_num_heads: 4
+  text_intermediate_size: 1024
+  speaker_proj_dim: 128
+
+optimizer:
+  lr: 0.0002
+  warmup_steps: 1000
+  weight_decay: 0.01
+  adam_b1: 0.9
+  adam_b2: 0.95
+  lr_schedule: "const"
+
+train:
+  total_steps: 10000
+  train_batch_size: 8
+  chunk_frames: 862
+  save_per_step: 2000
+  ema_decay: 0.999
+  max_grad_norm: 2.0
+
+  num_clusters: 500
+  positive_bank_size: 16
+  negative_bank_size: 128
+  push_per_step: 16
+  pos_per_sample: 16
+  neg_per_sample: 8
+
+  R_list: [0.02, 0.05, 0.2]
+
+  forward_dict:
+    gen_per_label: 4
+    cfg_min: 1.0
+    cfg_max: 3.0
+    neg_cfg_pw: 1.0
+    no_cfg_frac: 0.3

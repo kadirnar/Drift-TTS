@@ -1,0 +1,2 @@
+- [project_drift_tts.md](project_drift_tts.md) - Drift-TTS project context: one-step TTS using drift paradigm, JAX→PyTorch port
+- [feedback_use_uv.md](feedback_use_uv.md) - Always use uv for dependency management, never pip/conda

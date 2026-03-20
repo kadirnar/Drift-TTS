@@ -1,0 +1,27 @@
+[project]
+name = "drift-tts"
+version = "0.1.0"
+description = "One-step real-time TTS via generative drifting"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.1.0",
+    "torchaudio>=2.1.0",
+    "transformers>=4.36.0",
+    "einops>=0.7.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.65.0",
+    "dacvae @ git+https://github.com/facebookresearch/dacvae",
+]
+
+[project.scripts]
+drift-tts-train = "scripts.train:main"
+drift-tts-infer = "scripts.inference:main"
+drift-tts-cache = "scripts.cache_latents:main"
+drift-tts-eval = "scripts.evaluate:main"
+
+[tool.setuptools.packages.find]
+include = ["drift_tts*", "scripts*"]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"

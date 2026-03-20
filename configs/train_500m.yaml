@@ -1,0 +1,77 @@
+# Drift-TTS 500M+ model training config
+# Based on drifting/configs/gen/latent_sota_L.yaml, adapted for TTS
+
+logging:
+  project: "drift-tts"
+  entity: null
+  use_wandb: false
+  log_every_k: 20
+  name: "drift-tts-500m"
+
+dacvae_path: "facebook/dacvae-watermarked"
+wavlm_path: "microsoft/wavlm-large"
+
+data:
+  cache_root: "/data/emilia/cache"
+  num_workers: 8
+
+model:
+  # DACVAE specs (latent_dim=128, patched 128*8=1024)
+  latent_dim: 128
+  latent_patch_size: 8
+
+  # DiT specs
+  hidden_size: 1024
+  depth: 22
+  num_heads: 16
+  mlp_ratio: 4.0
+  use_qknorm: true
+  use_swiglu: true
+  use_rope: true
+  use_rmsnorm: true
+  use_gradient_checkpointing: true
+
+  # Text encoder (Echo TTS style: UTF-8 byte transformer)
+  vocab_size: 259
+  text_hidden_size: 512
+  text_num_layers: 6
+  text_num_heads: 8
+  text_intermediate_size: 2048
+
+  # Speaker encoder
+  speaker_proj_dim: 256
+
+optimizer:
+  lr: 0.0002
+  warmup_steps: 10000
+  weight_decay: 0.01
+  adam_b1: 0.9
+  adam_b2: 0.95
+  lr_schedule: "const"
+
+train:
+  total_steps: 500000
+  train_batch_size: 32
+  chunk_frames: 862
+  save_per_step: 10000
+  ema_decay: 0.999
+  max_grad_norm: 2.0
+
+  # Memory bank
+  num_clusters: 5000
+  positive_bank_size: 32
+  negative_bank_size: 512
+  push_per_step: 32
+  pos_per_sample: 32
+  neg_per_sample: 16
+
+  # Drift loss
+  R_list: [0.02, 0.05, 0.2]
+
+  # CFG
+  forward_dict:
+    gen_per_label: 8
+    cfg_min: 1.0
+    cfg_max: 3.0
+    neg_cfg_pw: 1.0
+    no_cfg_frac: 0.3
